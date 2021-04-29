@@ -76,6 +76,7 @@ class UserController {
 
             if(['name','email','password'].indexOf(field.name) > -1 && field.value == ''){
                 field.parentElement.classList.add('has-error');
+                field.after(Utils.requiredFieldError());
                 isValid = false;
             }
             if(field.name == "gender"){
@@ -127,7 +128,33 @@ class UserController {
 
         this.updateCount();
 
-        document.querySelector(".btn-update").addEventListener("click", e=>{
+        tr.querySelector(".btn-update").addEventListener("click", e=>{
+            let json = JSON.parse(tr.dataset.user);
+            let form = document.querySelector("#form-user-update");
+
+            for(let name in json){
+                let field = form.querySelector("[name=" + name.replace("_" , "") + "]");
+                
+                if(field){
+                    switch(field.type){
+                        case 'file':
+                            continue;
+                            break;
+                        case 'radio':
+                            field = form.querySelector("[name=" + name.replace("_" , "") + "]" + "[value=" + json[name] + "]");
+                            field.checked = true;
+                            break;
+                        case 'checkbox':
+                            field.checked = json[name];
+                            break;
+                        default:
+                            field.value = json[name];         
+                    };
+                    
+                }
+
+            }
+
             this.showPanelUpdate();
         });
     }

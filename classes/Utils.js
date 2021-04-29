@@ -9,8 +9,11 @@ class Utils{
                ).toLocaleString('pt-BR');
     }
 
-    // static requiredFieldError(){
-    //     let requiredMsg = document.createElement('span');
-    //     requiredMsg.innerHTML = 'Campo obrigatório!';
-    // }
+    static requiredFieldError(){
+        let requiredMsg = document.createElement('span');
+        requiredMsg.classList.add('help-block');
+        requiredMsg.innerHTML = 'Campo obrigatório!';
+
+        return requiredMsg;
+    }
 }
