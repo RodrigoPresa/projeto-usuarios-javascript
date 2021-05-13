@@ -6,6 +6,7 @@ class UserController {
 
         this.onSubmit();
         this.onEdit();
+        this.selectAll();
     }
 
     onEdit(){
@@ -77,6 +78,7 @@ class UserController {
             
             this.getPhoto(this.formEl).then((content)=>{
                 values.photo = content;
+                this.insert(values);
                 this.addLine(values);
                 this.formEl.reset();
                 btnSubmit.disabled = false;
@@ -155,6 +157,37 @@ class UserController {
             user.admin
         );
     }
+
+    getUsersStorage(){ //Verifica se há informações armazenadas em local storage. Caso true, armazena as infos no array vazio e retorna os valores
+        let users = [];
+
+        if(localStorage.getItem("users")){
+            users = JSON.parse(localStorage.getItem("users"));
+        }
+
+        return users;
+    }
+
+    selectAll(){ //seleciona as informações já armazenadas em local storage e adiciona as linhas na tela
+        let users = this.getUsersStorage();
+
+        users.forEach(dataUser=>{
+            let user = new User();
+
+            user.loadFromJSON(dataUser);
+
+            this.addLine(user);
+        });
+    }
+
+    insert(data){ //Método responsável por armazenar as informações em localStorage
+        let users = this.getUsersStorage();
+
+        users.push(data);
+
+        //sessionStorage.setItem("users", JSON.stringify(users)); usado para armazenar em sessionStorage
+        localStorage.setItem("users", JSON.stringify(users));
+    }
     
     addLine(users){
 
@@ -170,7 +203,7 @@ class UserController {
             <td>${Utils.dateFormat(users.register)}</td>
             <td>
                 <button type="button" class="btn btn-primary btn-update btn-xs btn-flat">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
             </td>
         `;
 
@@ -179,11 +212,18 @@ class UserController {
         this.tableEl.appendChild(tr);
 
         this.updateCount();
-
         
     }
 
     addEventsTr(tr){
+
+        tr.querySelector(".btn-delete").addEventListener("click", e=>{
+            if(confirm("Deseja realmente excluir o usuário?")){
+                tr.remove();
+                this.updateCount();
+            }
+        });
+
         tr.querySelector(".btn-update").addEventListener("click", e=>{
             let json = JSON.parse(tr.dataset.user);
 
