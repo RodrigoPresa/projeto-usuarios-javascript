@@ -37,6 +37,7 @@ class UserController {
 
                 let user = new User();
                 user.loadFromJSON(result);
+                user.save();
 
                 this.getTr(user, tr);
 
@@ -68,7 +69,7 @@ class UserController {
             
             this.getPhoto(this.formEl).then((content)=>{
                 values.photo = content;
-                this.insert(values);
+                values.save();
                 this.addLine(values);
                 this.formEl.reset();
                 btnSubmit.disabled = false;
@@ -168,15 +169,6 @@ class UserController {
 
             this.addLine(user);
         });
-    }
-
-    insert(data){ //Método responsável por armazenar as informações em localStorage
-        let users = this.getUsersStorage();
-
-        users.push(data);
-
-        //sessionStorage.setItem("users", JSON.stringify(users)); usado para armazenar em sessionStorage
-        localStorage.setItem("users", JSON.stringify(users));
     }
     
     addLine(users){
