@@ -149,18 +149,8 @@ class UserController {
         );
     }
 
-    getUsersStorage(){ //Verifica se há informações armazenadas em local storage. Caso true, armazena as infos no array vazio e retorna os valores
-        let users = [];
-
-        if(localStorage.getItem("users")){
-            users = JSON.parse(localStorage.getItem("users"));
-        }
-
-        return users;
-    }
-
     selectAll(){ //seleciona as informações já armazenadas em local storage e adiciona as linhas na tela
-        let users = this.getUsersStorage();
+        let users = User.getUsersStorage();
 
         users.forEach(dataUser=>{
             let user = new User();
@@ -206,6 +196,10 @@ class UserController {
 
         tr.querySelector(".btn-delete").addEventListener("click", e=>{
             if(confirm("Deseja realmente excluir o usuário?")){
+
+                let user = new User();
+                user.loadFromJSON(JSON.parse(tr.dataset.user));
+                user.remove();
                 tr.remove();
                 this.updateCount();
             }
